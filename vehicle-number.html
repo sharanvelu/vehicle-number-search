@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vehicle Number</title>
+
+    <!-- CSS only -->
+    <link rel="stylesheet" href="res/bootstrap_style.css">
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="res/jquery.js"></script>
+
+</head>
+<body>
+<main class="m-5 p-3 container">
+    <form class="border border-danger rounded-lg p-3">
+        <div class="form-group row">
+            <div class="form-group row col-md-6">
+                <label for="start_num" class="col-md-4 col-form-label text-md-right">Starting number * </label>
+                <div class="col-md-8">
+                    <input id="start_num" type="number" class="form-control" required min="1000" max="9999"
+                           placeholder="Enter Starting number">
+                </div>
+            </div>
+
+            <div class="form-group row col-md-6">
+                <label for="end_num" class="col-md-4 col-form-label text-md-right">Ending number * </label>
+                <div class="col-md-8">
+                    <input id="end_num" type="number" class="form-control" required min="1000" max="9999"
+                           placeholder="Enter Ending number">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="form-group row col-md-6">
+                <label for="digit_sum" class="col-md-4 col-form-label text-md-right">Sum * </label>
+                <div class="col-md-8">
+                    <input id="digit_sum" type="number" class="form-control" required min="1" max="9"
+                           placeholder="Enter Sum">
+                </div>
+            </div>
+
+            <div class="form-group row col-md-6">
+                <div class="col-md-8 offset-md-4">
+                    <button type="submit" class="btn btn-primary" id="submit" onclick="event.preventDefault()">
+                        Search
+                    </button>
+                    <button type="Clear" class="btn btn-secondary" id="clear" onclick="event.preventDefault()">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="p-3 row" style="display: none" id="output">
+        <div class="border border-danger rounded-lg p-3 col-md-6">
+            <h3>Fancy numbers to sum : <span class="sum-output-span"></span></h3>
+            <div id="fancy_num"></div>
+        </div>
+        <div class="border border-danger rounded-lg p-3 col-md-6">
+            <h3>All numbers to sum : <span class="sum-output-span"></span></h3>
+            <div id="all_num"></div>
+        </div>
+    </div>
+</main>
+
+<script>
+    var bool;
+    $('#submit').click(function () {
+        bool = false;
+        $('#all_num').html('');
+        $('#fancy_num').html('');
+        $('#output').hide();
+
+        var start = parseInt($('#start_num').val());
+        var end = parseInt($('#end_num').val());
+        var sum = parseInt($('#digit_sum').val());
+
+        var all_num = '';
+        var fancy_num = '';
+
+        for (var number = start; number <= end; number++) {
+            if (digitSum(number) === sum) {
+                bool = true;
+                all_num += number + ' : ' + sum + '<br>';
+                if (fancyCheck(number)) {
+                    fancy_num += number + ' : ' + sum + '<br>';
+                }
+            }
+        }
+        if (bool) {
+            $('.sum-output-span').html(sum);
+            $('#all_num').html(all_num);
+            $('#fancy_num').html(fancy_num);
+            $('#output').show();
+        }
+    });
+
+    function digitSum(number) {
+        var sum = 0
+        while (number > 0) {
+            sum += number % 10;
+            number = Math.floor(number / 10);
+        }
+        if (sum > 9) {
+            return digitSum(sum);
+        } else {
+            return sum;
+        }
+    }
+
+    function fancyCheck(number) {
+        var digit_1 = Math.floor(number / 1000) % 10;
+        var digit_2 = Math.floor(number / 100) % 10;
+        var digit_3 = Math.floor(number / 10) % 10;
+        var digit_4 = number % 10;
+        if (digit_2 === digit_4 || digit_1 === digit_3 || digit_1 === digit_4 && digit_2 === digit_3) {
+            return true;
+        } else return (digit_1 === digit_2 && digit_3 === digit_4);
+    }
+
+    function nextNumbers(number) {
+        if (number % 100 === Math.floor(number / 100) + 1 || number % 100 === Math.floor(number / 100) - 1) {
+            return true;
+        } else if ((Math.floor(number / 1000) === (Math.floor(number / 100) % 10) + 1)) {
+            if (Math.floor(number / 100) % 10 === (Math.floor(number / 10) % 10) + 1)
+                if ((number / 10) % 10 === (number % 10) + 1)
+                    return true;
+        } else {
+            return false;
+        }
+    }
+
+    $('#clear').click(function () {
+        $('#start_num').val();
+        $('#end_num').val();
+        $('#digit_sum').val();
+        bool = false;
+        $('#all_num').html('');
+        $('#fancy_num').html('');
+        $('#output').hide();
+    });
+
+</script>
+</body>
+</html>
